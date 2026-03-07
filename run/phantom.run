@@ -14,7 +14,16 @@ set build_components {
     snapper
     lib/vfs_lwext4
     lib/snap
+    lib/tresor
+    lib/libusb
+    driver/usb_block
+    lib/vfs_tresor_trust_anchor
+    lib/libcrypto
+    lib/libc
 }
+
+# My experiments are after lib/snap in build_components
+
 
 #
 # Build EXT4-file-system image
@@ -22,7 +31,7 @@ set build_components {
 
 set mke4fs [installed_command mkfs.ext4]
 set dd     [installed_command dd]
-set cat    [installed_command cat]
+set cat     [installed_command cat]
 
 catch { exec $dd if=/dev/zero of=bin/block0.raw bs=1M count=0 seek=2048 }
 catch { exec $dd dd conv=notrunc bs=4096 count=1 seek=16 if=/phantomuserland/src/run/img/phantom.superblock of=bin/block0.raw }
@@ -32,7 +41,7 @@ catch { exec $dd if=/dev/zero of=bin/snapper_block.raw bs=1M count=256 }
 catch { exec $mke4fs -O^metadata_csum -F bin/snapper_block.raw }
 
 set config {
-<config verbose="yes">
+<config>
 	<parent-provides>
 		<service name="ROM"/>
 		<service name="IRQ"/>
@@ -69,6 +78,12 @@ if {[have_board pc]} {
 
 append config [ exec $cat [genode_dir]/repos/ports/run/phantom_gui-common.inc ]
 
+
+
+append config [ exec $cat /phantomuserland/run/phantom_usb.inc ]
+
+
+
 append config { </config> }
 
 import_from_depot [depot_user]/pkg/[drivers_interactive_pkg] \
@@ -92,12 +107,17 @@ if {[have_board linux]} {
 if {[have_board pc]} {
     build_boot_image [list {*}[build_artifacts] phantom_classes isomem ]
 
-    append qemu_args " -smp 8 "
-    append qemu_args " -m 12000 "
-    append qemu_args " -device virtio-vga -enable-kvm -cpu host "
+    append qemu_args " -smp 2 "
+    append qemu_args " -m 8000 "
     append qemu_args " -device ahci,id=ahci -boot d "
     append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
     append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
+
+
+    append qemu_args " -usb -device usb-host,vendorid=0x8564,productid=0x1000 "
+
+
+
 }
 
 run_genode_until forever
