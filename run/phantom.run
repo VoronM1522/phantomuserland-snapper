@@ -21,6 +21,9 @@ set build_components {
     lib/libcrypto
     lib/libc
     driver/usb_host
+    encryptor
+    lib/posix
+    lib/libm
 }
 
 # My experiments are after lib/snap in build_components
