@@ -12,27 +12,6 @@
 
 
 
-<!--
-<start name="usb_vfs" ram="24M">
-  <binary name="vfs"/>
- 	<provides><service name="File_system"/></provides>
- 	<config>
- 		<vfs>
- 			<dir name="dev">
- 				<block name="usb_block" block_buffer_count="512" service="Block"/>
- 			</dir>
-			<lwext4 block_device="/dev/usb_block" cache_write_back="yes"
-				      expand_via_io="yes" writeable="yes"
-				      reporting="yes"
-				      external_cache_size="0M" report_cache="no"/>
- 		</vfs>
- 	</config>
-  <route>
-   <service name="Block"> <child name="usb_sec"/> </service>
-   <any-service> <parent/> <any-child/> </any-service>
-  </route>
-</start>
--->
 
 <start name="usb_vfs" ram="32M">
   <binary name="vfs"/>
@@ -45,6 +24,7 @@
              block_device="/dev/usb_block"
              writeable="yes"/>
     </vfs>
+    <policy label_prefix="encryptor -> usb" root="/" writeable="yes"/>
   </config>
   <route>
    <service name="Block"> <child name="usb_sec"/> </service>
@@ -52,11 +32,45 @@
   </route>
 </start>
 
-<start name="encryptor" ram="32M">
-    <config/>
-    <route>
-        <service name="File_system"><child name="usb_vfs"/></service>
-        <any-service><parent/></any-service>
-    </route>
-</start>
 
+<start name="encryptor" ram="32M" caps="200">
+  <binary name="encryptor"/>
+  <config>
+    <libc stdout="/dev/log" stderr="/dev/log"/>
+    <vfs>
+      <dir name="dev">
+        <log/>
+      </dir>
+
+      <dir name="mnt">
+        <fs label="usb" writeable="yes"/>
+      </dir>
+    </vfs>
+  </config>
+
+  <route>
+    <service name="File_system">
+      <child name="usb_vfs"/>
+    </service>
+
+    <service name="LOG">
+      <parent/>
+    </service>
+    <service name="ROM">
+      <parent/>
+    </service>
+    <service name="CPU">
+      <parent/>
+    </service>
+    <service name="PD">
+      <parent/>
+    </service>
+    <service name="Timer">
+      <parent/>
+    </service>
+
+    <any-service>
+      <parent/>
+    </any-service>
+  </route>
+</start>
