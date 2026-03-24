@@ -24,6 +24,8 @@ set build_components {
     encryptor
     lib/posix
     lib/libm
+    lib/fatfs
+    lib/vfs_fatfs
 }
 
 # My experiments are after lib/snap in build_components
@@ -117,9 +119,12 @@ if {[have_board pc]} {
     append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
     append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
 
-    append qemu_args " -device qemu-xhci,id=xhci -usb -device usb-host,vendorid=0x8564,productid=0x1000 "
-
-#    append qemu_args " -usb -device usb-host,vendorid=0x8564,productid=0x1000 "
+#    append qemu_args " -device usb-ehci,id=ehci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=ehci.0 "
+#    append qemu_args " -device ide-hd,drive=snapper,bus=ahci.1 -device qemu-xhci,id=xhci,bus=pci.0,addr=0x5 -device usb-mouse,bus=xhci.0 -device usb-kbd,bus=xhci.0 -device usb-host,vendorid=0x8564,productid=0x1000,bus=xhci.0  "
+#    append qemu_args " -device qemu-xhci,id=xhci -device usb-host,hostbus=3,hostaddr=29,bus=xhci.0 "
+    append qemu_args " -device qemu-xhci,id=xhci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=xhci.0 "
+###     append qemu_args " --device qemu-xhci -device usb-host,hostbus=3,hostaddr=17 "
+#    append qemu_args " -usb -device usb-host,vendorid=0x058f,productid=0x6387 "
 
 
 

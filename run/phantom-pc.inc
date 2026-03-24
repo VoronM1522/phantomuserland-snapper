@@ -12,8 +12,10 @@
 		<policy label="pci_decode -> system"    report="acpi -> acpi"/>
 		<policy label="platform -> devices" report="pci_decode -> devices"/>
 		<policy label="usb_hid -> report"    report="usb -> devices"/>
+		<default-policy report="usb -> usb -> devices"/>
 	</config>
 </start>
+
 
 <start name="acpi" caps="350">
 	<resource name="RAM" quantum="4M"/>
@@ -32,7 +34,7 @@
 	</route>
 </start>
 
-<start name="platform" ram="500M" caps="400" managing_system="yes">
+<start name="platform" ram="300M" caps="200" managing_system="yes">
 	<provides>
 		<service name="Platform"/>
 	</provides>
@@ -85,9 +87,13 @@
    	</vfs>
    	<policy label_prefix="snapper" root="/" writeable="yes"/>
   </config>
+  <route>
+    <service name="Block"> <child name="ahci"/> </service>
+    <any-service> <parent/> <any-child/> </any-service>
+  </route>
 </start>
 
-<start name="snapper" ram="500M" caps="300">
+<start name="snapper" ram="400M" caps="200">
   <provides>
     <service name="Snapper"/>
   </provides>
@@ -109,13 +115,14 @@
     </vfs>
   </config>
 	<route>
+		<service name="File_system"><child name="vfs"/></service>
 		<service name="Block"><child name="ahci"/></service>
 		<any-service> <parent/> <any-child /> </any-service>
 	</route>
 </start>
 
-<start name="isomem" caps="4000">
- 	<resource name="RAM" quantum="2G"/>
+<start name="isomem" caps="2000">
+ 	<resource name="RAM" quantum="1G"/>
   
  	<config verbose="yes" ld_verbose="yes">
  	</config>

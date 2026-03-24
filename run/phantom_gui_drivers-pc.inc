@@ -1,6 +1,6 @@
-<start name="fb" caps="200" ram="100M">
+<start name="fb" caps="120" ram="20M">
 	<binary name="vesa_fb"/>
-  <config width="1024" height="768" buffered="yes" verbose="yes"/>
+  <config width="1024" height="768" buffered="yes"/>
 	<route>
 		<service name="Report">  <child name="report_rom"/> </service>
 		<service name="Platform"> <child name="platform"/> </service>
@@ -31,9 +31,12 @@
 <start name="usb" caps="200" ram="16M">
 	<binary name="pc_usb_host"/>
 	<provides> <service name="Usb"/> </provides>
-	<config>
+	<config verbose="yes" uhci="yes" ehci="yes" xhci="yes">
 		<report devices="yes"/>
 		<policy label_prefix="usb_hid"><device class="0x3"/></policy>
+		<policy label="usb_sec -> ">
+			<device vendor_id="0x058f" product_id="0x6387"/> 
+		</policy>
 	</config>
 	<route>
 		<service name="Platform"> <child name="platform"/> </service>

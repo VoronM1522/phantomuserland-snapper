@@ -91,12 +91,13 @@
     </vfs>
   </config>
 	<route>
+    <service name="File_system"><child name="vfs"/></service>
 		<service name="File_system"><child name="vfs"/></service>
 		<any-service> <parent/> <any-child /> </any-service>
 	</route>
 </start>
 
-<start name="isomem" caps="5000">
+<start name="isomem" caps="2000">
  	<resource name="RAM" quantum="2G"/>
   
  	<config verbose="yes" ld_verbose="yes">
