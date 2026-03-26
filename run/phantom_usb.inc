@@ -12,65 +12,49 @@
 
 
 
-
-<start name="usb_vfs" ram="32M">
-  <binary name="vfs"/>
-  <provides>
-    <service name="File_system"/>
-  </provides>
-  <config>
-    <vfs>
-      <fatfs label="usb"
-             block_device="/dev/usb_block"
-             writeable="yes"/>
-    </vfs>
-    <policy label_prefix="encryptor -> usb" root="/" writeable="yes"/>
-  </config>
-  <route>
-   <service name="Block"> <child name="usb_sec"/> </service>
-   <any-service> <parent/> <any-child/> </any-service>
-  </route>
-</start>
-
-
 <start name="encryptor" ram="32M" caps="200">
   <binary name="encryptor"/>
+  <provides> <service name="File_system"/> </provides>
   <config>
     <libc stdout="/dev/log" stderr="/dev/log"/>
     <vfs>
-      <dir name="dev">
-        <log/>
-      </dir>
-
-      <dir name="mnt">
-        <fs label="usb" writeable="yes"/>
-      </dir>
+      <dir name="dev"> <log/> </dir>
+      <dir name="tmp"> <ram/> </dir>
+      <dir name="usb_keystorage"> <fatfs/> </dir>
+      <!--
+      <dir name="snapshot"> <fs/> </dir>
+      -->
     </vfs>
   </config>
-
   <route>
-    <service name="File_system">
-      <child name="usb_vfs"/>
-    </service>
-
-    <service name="LOG">
-      <parent/>
-    </service>
-    <service name="ROM">
-      <parent/>
-    </service>
-    <service name="CPU">
-      <parent/>
-    </service>
-    <service name="PD">
-      <parent/>
-    </service>
-    <service name="Timer">
-      <parent/>
-    </service>
-
-    <any-service>
-      <parent/>
-    </any-service>
+    <service name="Block"> <child name="usb_sec"/> </service>
+    <!--
+    <service name="File_system"><child name="encryptor"/></service>
+    -->
+    <any-service> <parent/> </any-service>
   </route>
 </start>
+
+
+
+<!--
+<start name="vfs" ram="200M" caps="200">
+  <provides><service name="File_system"/></provides>
+  <config>
+   	<vfs>
+   		<dir name="dev">
+   			<block name="block" block_buffer_count="128"/>
+   		</dir>
+      <lwext4 block_device="/dev/block" cache_write_back="yes"
+              expand_via_io="no" writeable="yes"
+              reporting="no"
+              external_cache_size="32M" report_cache="yes"/>
+   	</vfs>
+   	<policy label_prefix="snapper" root="/" writeable="yes"/>
+  </config>
+  <route>
+    <service name="Block"> <child name="ahci"/> </service>
+    <any-service> <parent/> <any-child/> </any-service>
+  </route>
+</start>
+-->
