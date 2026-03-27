@@ -86,6 +86,7 @@
               external_cache_size="32M" report_cache="yes"/>
    	</vfs>
    	<policy label_prefix="snapper" root="/" writeable="yes"/>
+	<policy label_prefix="encryptor" root="/" writeable="yes"/>
   </config>
   <route>
     <service name="Block"> <child name="ahci"/> </service>

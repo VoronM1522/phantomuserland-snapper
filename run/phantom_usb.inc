@@ -14,23 +14,25 @@
 
 <start name="encryptor" ram="32M" caps="200">
   <binary name="encryptor"/>
+  <!--
   <provides> <service name="File_system"/> </provides>
+  -->
   <config>
     <libc stdout="/dev/log" stderr="/dev/log"/>
     <vfs>
       <dir name="dev"> <log/> </dir>
       <dir name="tmp"> <ram/> </dir>
       <dir name="usb_keystorage"> <fatfs/> </dir>
-      <!--
+
       <dir name="snapshot"> <fs/> </dir>
-      -->
     </vfs>
+    <policy label_prefix="snapshot" root="/snapshot" writeable="yes"/>
   </config>
   <route>
     <service name="Block"> <child name="usb_sec"/> </service>
-    <!--
-    <service name="File_system"><child name="encryptor"/></service>
-    -->
+    
+    <service name="File_system"><child name="vfs"/></service>
+    
     <any-service> <parent/> </any-service>
   </route>
 </start>
