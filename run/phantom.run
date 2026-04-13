@@ -14,19 +14,26 @@ set build_components {
     snapper
     lib/vfs_lwext4
     lib/snap
-    lib/tresor
     lib/libusb
     driver/usb_block
     lib/vfs_tresor_trust_anchor
     lib/libcrypto
     lib/libc
     driver/usb_host
-    encryptor
     lib/posix
     lib/libm
     lib/fatfs
     lib/vfs_fatfs
+    lib/tresor
+    app/se_tresor_init_trust_anchor
+    app/se_tresor_init
 }
+
+#    encryptor
+#    lib/stdcxx
+#    lib/vfs_ptcp
+#    snapshot_notifier
+#    ptcp_test
 
 # My experiments are after lib/snap in build_components
 
@@ -87,6 +94,7 @@ append config [ exec $cat [genode_dir]/repos/ports/run/phantom_gui-common.inc ]
 
 
 append config [ exec $cat /phantomuserland/run/phantom_usb.inc ]
+append config [ exec $cat /phantomuserland/run/phantom_ptcp.inc ]
 
 
 
@@ -119,15 +127,9 @@ if {[have_board pc]} {
     append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
     append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
 
-#    append qemu_args " -device usb-ehci,id=ehci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=ehci.0 "
-#    append qemu_args " -device ide-hd,drive=snapper,bus=ahci.1 -device qemu-xhci,id=xhci,bus=pci.0,addr=0x5 -device usb-mouse,bus=xhci.0 -device usb-kbd,bus=xhci.0 -device usb-host,vendorid=0x8564,productid=0x1000,bus=xhci.0  "
-#    append qemu_args " -device qemu-xhci,id=xhci -device usb-host,hostbus=3,hostaddr=29,bus=xhci.0 "
+
     append qemu_args " -device qemu-xhci,id=xhci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=xhci.0 "
-###     append qemu_args " --device qemu-xhci -device usb-host,hostbus=3,hostaddr=17 "
-#    append qemu_args " -usb -device usb-host,vendorid=0x058f,productid=0x6387 "
-
-
-
+    append qemu_args " -drive id=test,file=bin/test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
 }
 
 run_genode_until forever

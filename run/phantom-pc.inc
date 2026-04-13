@@ -117,9 +117,9 @@
   </config>
 	<route>
 		<service name="File_system"><child name="vfs"/></service>
-		<!--
-		<service name="File_system"><child name="encryptor"/></service>
-		-->
+	<!--
+		<service name="File_system"><child name="VM_fil_vault"/></service>
+	-->
 		<service name="Block"><child name="ahci"/></service>
 		<any-service> <parent/> <any-child /> </any-service>
 	</route>

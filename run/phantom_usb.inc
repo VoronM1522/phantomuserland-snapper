@@ -11,18 +11,35 @@
 </start>
 
 
+<start name="usb_sec_fs" ram="32M" caps="200">
+  <binary name="vfs"/>
+  <provides>
+    <service name="File_system"/>
+  </provides>
+  <config>
+    <vfs>
+      <fatfs block="default" writeable="yes"/>
+    </vfs>
+    <default-policy root="/" writeable="yes"/>
+  </config>
+  <route>
+    <service name="Block"> <child name="usb_sec"/> </service>
+    <any-service> <parent/> </any-service>
+  </route>
+</start>
 
+<!--
 <start name="encryptor" ram="32M" caps="200">
   <binary name="encryptor"/>
-  <!--
+  
   <provides> <service name="File_system"/> </provides>
-  -->
+
   <config>
     <libc stdout="/dev/log" stderr="/dev/log"/>
     <vfs>
       <dir name="dev"> <log/> </dir>
       <dir name="tmp"> <ram/> </dir>
-      <dir name="usb_keystorage"> <fatfs/> </dir>
+      <dir name="tresor"> <fatfs/> </dir>
 
       <dir name="snapshot"> <fs/> </dir>
     </vfs>
@@ -36,27 +53,73 @@
     <any-service> <parent/> </any-service>
   </route>
 </start>
+-->
+
+
+<start name="se_tresor_init_trust_anchor" ram="4M">
+  <config passphrase="foobar" trust_anchor_dir="/usb/trust_anchor">
+    <vfs>
+      <dir name="usb">
+        <fs label="usb_fs -> /"/>
+        <dir name="trust_anchor">
+          <fs label="ta -> /"/>
+        </dir>
+      </dir>
+    </vfs>
+  </config>
+  <route>
+    <service name="File_system"> <child name="usb_sec_fs"/> </service>
+    <any-service> <parent/> </any-service>
+  </route>
+</start>
+
+<!--
+<start name="se_tresor_init" ram="32M" caps="200">  
+  <config>
+    <vfs>
+      <dir name="dev"> <log/> </dir>
+      <dir name="tmp"> <ram/> </dir>
+      <dir name="usb"> <fs label="usb_fs -> /"/> </dir>
+    </vfs>
+    <virtual-block-device max_lvl="2" degree="64" num_leaves="512" />
+    <free-tree max_lvl="2" degree="64" num_leaves="2048" />
+  </config>
+
+  <route>
+    <service name="File_system"> <child name="usb_sec_fs"/> </service>
+    <any-service> <parent/> </any-service>
+  </route>
+</start>
+-->
+
 
 
 
 <!--
-<start name="vfs" ram="200M" caps="200">
-  <provides><service name="File_system"/></provides>
-  <config>
-   	<vfs>
-   		<dir name="dev">
-   			<block name="block" block_buffer_count="128"/>
-   		</dir>
-      <lwext4 block_device="/dev/block" cache_write_back="yes"
-              expand_via_io="no" writeable="yes"
-              reporting="no"
-              external_cache_size="32M" report_cache="yes"/>
-   	</vfs>
-   	<policy label_prefix="snapper" root="/" writeable="yes"/>
-  </config>
-  <route>
-    <service name="Block"> <child name="ahci"/> </service>
-    <any-service> <parent/> <any-child/> </any-service>
-  </route>
-</start>
+				<start name="tresor_init" ram="4M">
+					<config>
+
+						<block-io type="vfs" path="/tresor.img"/>
+						<crypto path="/crypto"/>
+						<trust-anchor path="/trust_anchor"/>
+
+						<vfs>
+							<fs buffer_size="1M"/>
+							<tresor_crypto_aes_cbc name="crypto"/>
+							<dir name="trust_anchor">
+								<fs label="ta -> /"/>
+							</dir>
+						</vfs>
+
+						<virtual-block-device max_lvl="2" degree="64" num_leaves="512" />
+						<free-tree max_lvl="2" degree="64" num_leaves="2048" />
+
+					</config>
+					<route>
+						<service name="PD">  <parent/> </service>
+						<service name="ROM"> <parent/> </service>
+						<service name="LOG"> <parent/> </service>
+						<service name="CPU"> <parent/> </service>
+					</route>
+				</start>
 -->
