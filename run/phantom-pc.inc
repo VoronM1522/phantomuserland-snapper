@@ -66,6 +66,7 @@
 		<report ports="yes"/>
 		<policy label="isomem -> " device="0" writeable="yes" />
 		<policy label="vfs -> " device="1" writeable="yes" />
+		<policy label="se_vfs -> " device="2" writeable="yes" />
 	</config>
 	<route>
 		<service name="Report"> <child name="ahci_report_rom"/> </service>
