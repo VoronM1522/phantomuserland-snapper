@@ -30,6 +30,9 @@ set build_components {
     app/se_tresor_init_trust_anchor
     app/se_tresor_init
     app/sequence
+    app/fs_query
+    lib/vfs_query
+    ls
 }
 
 #    encryptor

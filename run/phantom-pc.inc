@@ -86,8 +86,10 @@
               reporting="no"
               external_cache_size="32M" report_cache="yes"/>
    	</vfs>
+	<!-- <default-policy root="/" writeable="yes"/> -->
    	<policy label_prefix="snapper" root="/" writeable="yes"/>
-	<policy label_prefix="encryptor" root="/" writeable="yes"/>
+	<!-- <policy label_prefix="se_tresor_init" root="/" writeable="yes"/> -->
+	<!-- <policy label_prefix="fs_query" root="/" writeable="yes"/> -->
   </config>
   <route>
     <service name="Block"> <child name="ahci"/> </service>

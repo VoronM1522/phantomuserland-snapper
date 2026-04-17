@@ -26,6 +26,7 @@
         <tresor_trust_anchor name="tresor_trust_anchor" storage_dir="/usb"/>
       </dir>
     </vfs>
+    <query path="/"/>
     <default-policy root="/dev/tresor_trust_anchor" writeable="yes"/>
     <!--
     <policy label="sequence -> se_tresor_init_trust_anchor -> /" root="/dev/tresor_trust_anchor" writeable="yes"/>
@@ -42,20 +43,23 @@
 <start name="se_vfs" ram="200M" caps="200">
   <binary name="vfs"/>
   <provides><service name="File_system"/></provides>
-  <config>
+  <config verbose="yes">
    	<vfs>
    		<dir name="dev">
    			<block name="block" block_buffer_count="128"/>
    		</dir>
-      <lwext4 block_device="/dev/block" cache_write_back="yes"
-              expand_via_io="no" writeable="yes"
-              reporting="no"
-              external_cache_size="32M" report_cache="yes"/>
+      <dir name="drive">
+        <lwext4 block_device="/dev/block" cache_write_back="yes"
+                expand_via_io="no" writeable="yes"
+                reporting="yes"
+                external_cache_size="32M" report_cache="yes"/>
+      </dir>
    	</vfs>
-   	<policy label="sequence -> se_tresor_init -> tresor -> /" root="/" writeable="yes"/>
+    <default-policy root="/drive" writeable="yes"/>
   </config>
   <route>
     <service name="Block"> <child name="ahci"/> </service>
+    <!-- <service name="Report"> <child name="report_rom"/> </service> -->
     <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
@@ -99,8 +103,8 @@
         <free-tree max_lvl="2" degree="64" num_leaves="2048" />
       </config>
       <route>
-        <service name="File_system" lable="ta -> /"> <child name="usb_sec_fs"/> </service>
-        <service name="File_system" lable="tresor -> /"> <child name="se_vfs"/> </service>
+        <service name="File_system" label="ta -> /"> <child name="usb_sec_fs"/> </service>
+        <service name="File_system" label="tresor -> /"> <child name="vfs"/> </service>
         <any-service> <parent/> </any-service>
       </route>
     </start>
@@ -109,11 +113,42 @@
   </config>
   <route>
     <service name="File_system"> <child name="usb_sec_fs"/> </service>
+    <!-- <service name="File_system"> <child name="vfs"/> </service> -->
     <service name="File_system"> <child name="se_vfs"/> </service>
+    <!-- <service name="Block"> <child name="ahci"/> </service> -->
+    <!-- <service name="Report"> <child name="report_rom"/> </service> -->
     <service name="PD">  <parent/> </service>
     <service name="ROM"> <parent/> </service>
     <service name="LOG"> <parent/> </service>
     <service name="CPU"> <parent/> </service>
     <any-service> <parent/> </any-service>
+  </route>
+</start>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<start name="ls">
+  <resource name="RAM" quantum="1M"/>
+  <config>
+    <vfs>
+      <dir>
+        <fs/>
+      </dir>
+    </vfs>
+  </config>
+  <route>
+    <service name="File_system"> <child name="se_vfs"/> </service>
+    <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
