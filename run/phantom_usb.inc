@@ -1,3 +1,10 @@
+<!--
+  Надо разобраться:
+    - Для чего нужны все эти директории?
+    - Где хранить директорию crypto?
+    - Понадобятся ли другие директории?
+-->
+
 <start name="usb_sec" ram="4M">
   <binary name="usb_block"/>
   <provides> <service name="Block"/> </provides>
@@ -169,22 +176,3 @@
     <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
-
-
-
-<!-- 
-<start name="encryptor" ram="4M">
-  <config>
-    <vfs>
-      <dir name="tresor">
-
-        <fs/>
-      </dir>
-    </vfs>
-  </config>
-  <route>
-    <service name="File_system"> <child name="se_vfs"/> </service>
-    <any-service> <parent/> <any-child/> </any-service>
-  </route>
-</start>
--->
