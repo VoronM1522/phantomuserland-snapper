@@ -48,18 +48,28 @@
    		<dir name="dev">
    			<block name="block" block_buffer_count="128"/>
    		</dir>
-      <dir name="drive">
-        <lwext4 block_device="/dev/block" cache_write_back="yes"
-                expand_via_io="no" writeable="yes"
-                reporting="yes"
-                external_cache_size="32M" report_cache="yes"/>
+      <dir name="block">
+        <dir name="se_tresor">
+          <lwext4 block_device="/dev/block" cache_write_back="yes"
+                  expand_via_io="no" writeable="yes"
+                  reporting="yes"
+                  external_cache_size="32M" report_cache="yes"/>
+        </dir>
+        <dir name="se_trust_anchor">
+          <fs/>
+        </dir>
+        <dir name="crypto"/>
+        <dir name="dev">
+          <log/>
+        </dir>
       </dir>
    	</vfs>
-    <default-policy root="/drive" writeable="yes"/>
+    <default-policy root="/block" writeable="yes"/>
   </config>
   <route>
     <service name="Block"> <child name="ahci"/> </service>
-    <!-- <service name="Report"> <child name="report_rom"/> </service> -->
+    <service name="File_system"> <child name="usb_sec_fs"/> </service>
+    <service name="Report"> <child name="report_rom"/> </service>
     <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
@@ -69,12 +79,27 @@
 	<config>
 
 
+      <start name="ls_seq" ram="4M">
+        <binary name="ls"/>
+        <config>
+          <libc stdout="/dev/log" stderr="/dev/log"/>
+          <vfs>
+            <fs/>
+          </vfs>
+        </config>
+        <route>
+          <service name="File_system"> <child name="se_vfs"/> </service>
+          <any-service> <parent/> <any-child/> </any-service>
+        </route>
+      </start>
+
+
+
+
     <start name="se_tresor_init_trust_anchor" ram="4M">
       <config passphrase="foobar" trust_anchor_dir="/se_trust_anchor">
         <vfs>
-          <dir name="se_trust_anchor">
-            <fs/>
-          </dir>
+          <fs/>
         </vfs>
       </config>
       <route>
@@ -86,25 +111,18 @@
 
     <start name="se_tresor_init" ram="4M">
       <config>
-        <block-io type="vfs" path="/tresor/tresor.img"/> 
+        <block-io type="vfs" path="/se_tresor/tresor.img"/> 
         <crypto path="/crypto"/> 
-        <trust-anchor path="/trust_anchor"/> 
+        <trust-anchor path="/se_trust_anchor"/> 
           <vfs>
-          <fs buffer_size="1M"/>
-          <tresor_crypto_aes_cbc name="crypto"/>
-          <dir name="tresor">
-            <fs label="tresor -> /"/>
-          </dir>
-          <dir name="trust_anchor">
-            <fs label="ta -> /"/>
-          </dir>
-        </vfs>
+            <fs buffer_size="1M"/>
+            <tresor_crypto_aes_cbc name="crypto"/>
+          </vfs>
         <virtual-block-device max_lvl="2" degree="64" num_leaves="512" />
         <free-tree max_lvl="2" degree="64" num_leaves="2048" />
       </config>
       <route>
-        <service name="File_system" label="ta -> /"> <child name="usb_sec_fs"/> </service>
-        <service name="File_system" label="tresor -> /"> <child name="vfs"/> </service>
+        <service name="File_system"> <child name="se_vfs"/> </service>
         <any-service> <parent/> </any-service>
       </route>
     </start>
@@ -112,11 +130,7 @@
 
   </config>
   <route>
-    <service name="File_system"> <child name="usb_sec_fs"/> </service>
-    <!-- <service name="File_system"> <child name="vfs"/> </service> -->
     <service name="File_system"> <child name="se_vfs"/> </service>
-    <!-- <service name="Block"> <child name="ahci"/> </service> -->
-    <!-- <service name="Report"> <child name="report_rom"/> </service> -->
     <service name="PD">  <parent/> </service>
     <service name="ROM"> <parent/> </service>
     <service name="LOG"> <parent/> </service>
@@ -138,11 +152,14 @@
 
 
 
-<start name="ls">
-  <resource name="RAM" quantum="1M"/>
+<start name="ls" ram="4M">
   <config>
+    <libc stdout="/dev/log" stderr="/dev/log"/>
     <vfs>
-      <dir>
+      <dir name="dev">
+        <log/>
+      </dir>
+      <dir name="tresor">
         <fs/>
       </dir>
     </vfs>
@@ -152,3 +169,22 @@
     <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
+
+
+
+<!-- 
+<start name="encryptor" ram="4M">
+  <config>
+    <vfs>
+      <dir name="tresor">
+
+        <fs/>
+      </dir>
+    </vfs>
+  </config>
+  <route>
+    <service name="File_system"> <child name="se_vfs"/> </service>
+    <any-service> <parent/> <any-child/> </any-service>
+  </route>
+</start>
+-->

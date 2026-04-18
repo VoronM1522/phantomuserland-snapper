@@ -33,6 +33,7 @@ set build_components {
     app/fs_query
     lib/vfs_query
     ls
+    encryptor
 }
 
 #    encryptor
