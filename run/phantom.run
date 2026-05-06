@@ -6,7 +6,8 @@ create_boot_directory
 
 set build_components {
     core init timer
-    lib/ld lib/vfs
+    lib/ld
+    lib/vfs
     server/report_rom
     driver/rtc
     server/nitpicker
@@ -30,6 +31,14 @@ set build_components {
     app/se_tresor_init_trust_anchor
     app/se_tresor_init
     app/sequence
+    app/se_vault
+    lib/sandbox
+    server/dynamic_rom
+    app/fs_query
+    lib/vfs_tresor
+    app/mke2fs
+    server/vfs_block
+    lib/vfs_rump
     ls
 }
 
@@ -50,15 +59,21 @@ set mke4fs [installed_command mkfs.ext4]
 set dd     [installed_command dd]
 set cat     [installed_command cat]
 
-catch { exec $dd if=/dev/zero of=bin/block0.raw bs=1M count=0 seek=2048 }
-catch { exec $dd dd conv=notrunc bs=4096 count=1 seek=16 if=/phantomuserland/src/run/img/phantom.superblock of=bin/block0.raw }
+if {![file exists bin/block0.raw]} {
+    catch { exec $dd if=/dev/zero of=bin/block0.raw bs=1M count=0 seek=2048 }
+    catch { exec $dd dd conv=notrunc bs=4096 count=1 seek=16 if=/phantomuserland/src/run/img/phantom.superblock of=bin/block0.raw }
+}
+
 
 # NB: Change the value of count if you need more space for snapshots.
-catch { exec $dd if=/dev/zero of=bin/snapper_block.raw bs=1M count=256 }
-catch { exec $mke4fs -O^metadata_csum -F bin/snapper_block.raw }
+if {![file exists bin/snapper_block.raw]} {
+    catch { exec $dd if=/dev/zero of=bin/snapper_block.raw bs=1M count=256 }
+    catch { exec $mke4fs -O^metadata_csum -F bin/snapper_block.raw }
+}
+
 
 set config {
-<config>
+<config ld_verbose="yes">
 	<parent-provides>
 		<service name="ROM"/>
 		<service name="IRQ"/>
@@ -134,6 +149,7 @@ if {[have_board pc]} {
 
     append qemu_args " -device qemu-xhci,id=xhci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=xhci.0 "
     append qemu_args " -drive id=test,file=bin/test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
+    # append qemu_args " -drive id=test,file=bin/test16.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
     # append qemu_args " -drive id=test,file=bin/clean_test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
 }
 
