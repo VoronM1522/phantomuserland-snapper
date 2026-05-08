@@ -67,6 +67,8 @@
 		<policy label="isomem -> " device="0" writeable="yes" />
 		<policy label="vfs -> " device="1" writeable="yes" />
 		<policy label="se_vfs -> " device="2" writeable="yes" />
+		<!-- <policy label="se_vault -> " device="0" writeable="yes" /> -->
+		<!-- <defautl-policy device="0" writeable="yes" /> -->
 	</config>
 	<route>
 		<service name="Report"> <child name="ahci_report_rom"/> </service>
@@ -74,6 +76,7 @@
 	</route>
 </start>
 
+<!--
 <start name="vfs" ram="200M" caps="200">
   <provides><service name="File_system"/></provides>
   <config>
@@ -86,18 +89,17 @@
               reporting="no"
               external_cache_size="32M" report_cache="yes"/>
    	</vfs>
-	<!-- <default-policy root="/" writeable="yes"/> -->
    	<policy label_prefix="snapper" root="/" writeable="yes"/>
-	<!-- <policy label_prefix="se_tresor_init" root="/" writeable="yes"/> -->
-	<!-- <policy label_prefix="fs_query" root="/" writeable="yes"/> -->
   </config>
   <route>
     <service name="Block"> <child name="ahci"/> </service>
     <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
+-->
 
-<start name="snapper" ram="400M" caps="200">
+ 
+<start name="snapper" ram="400M" caps="400">
   <provides>
     <service name="Snapper"/>
   </provides>
@@ -106,8 +108,8 @@
       verbose="true"
       redundancy="2"
       integrity="true"
-      max_snapshots="0"
-      min_snapshots="0"
+      max_snapshots="5"
+      min_snapshots="1"
       threshold="1000"
       expiration="3600"
       bufsize="10M">
@@ -115,18 +117,22 @@
     <rtc/>
 
     <vfs>
-      <fs/>
+      <fs/>	  
     </vfs>
   </config>
 	<route>
-		<service name="File_system"><child name="vfs"/></service>
+
 	<!--
-		<service name="File_system"><child name="VM_fil_vault"/></service>
+		<service name="File_system"><child name="vfs"/></service>
 	-->
-		<service name="Block"><child name="ahci"/></service>
+
+		<service name="File_system"><child name="se_vault"/></service>
+		<!-- <service name="Block"><child name="ahci"/></service> -->
 		<any-service> <parent/> <any-child /> </any-service>
 	</route>
 </start>
+
+
 
 <start name="isomem" caps="2000">
  	<resource name="RAM" quantum="1G"/>
@@ -138,3 +144,4 @@
  		<any-service> <parent/> <any-child /> </any-service>
  	</route>
 </start>
+ 
