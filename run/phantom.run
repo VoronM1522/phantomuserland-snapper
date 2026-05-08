@@ -39,6 +39,7 @@ set build_components {
     app/mke2fs
     server/vfs_block
     lib/vfs_rump
+    lib/e2fsck
     ls
 }
 
