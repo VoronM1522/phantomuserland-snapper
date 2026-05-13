@@ -108,11 +108,15 @@
       verbose="true"
       redundancy="2"
       integrity="true"
-      max_snapshots="5"
-      min_snapshots="1"
+      max_snapshots="5" 
+      min_snapshots="1" 
       threshold="1000"
       expiration="3600"
       bufsize="10M">
+	  <!--
+	  max_snapshots="5" 
+      min_snapshots="1"
+	  -->
 
     <rtc/>
 

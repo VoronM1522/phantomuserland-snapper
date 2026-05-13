@@ -103,7 +103,7 @@
 -->
 
 
-<start name="usb_sec_fs" caps="120" ram="16M">
+<start name="usb_sec_fs" caps="120" ram="32M">
   <binary name="vfs"/>
   <provides>
     <service name="File_system"/>
@@ -113,9 +113,11 @@
       <dir name="usb">
         <fatfs block="default" writeable="yes"/>
       </dir>
+      <!--
       <dir name="dev">
         <tresor_trust_anchor name="tresor_trust_anchor" storage_dir="/usb"/>
       </dir>
+      -->
     </vfs>
     <default-policy root="/usb" writeable="yes"/>
   </config>
@@ -137,12 +139,12 @@
                 external_cache_size="32M" report_cache="yes"/>
       </dir>
     -->
-<start name="se_vfs" ram="200M" caps="200">
+<start name="se_vfs" ram="512M" caps="200">
   <binary name="vfs"/>
   <provides><service name="File_system"/></provides>
   <config verbose="yes">
    	<vfs>
-      <rump fs="ext2fs" ram="20M"/>
+      <rump fs="ext2fs" ram="256M"/>
    	</vfs>
     <default-policy root="/" writeable="yes"/>
   </config>
@@ -313,6 +315,7 @@
 		<service name="File_system" label_prefix="image_fs_query ->">       <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="File_system" label_prefix="se_tresor_vfs -> tresor_fs"> <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="File_system" label_prefix="truncate_file -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
+    <service name="File_system" label_prefix="init_flag -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="Timer"> <child name="timer"/> </service>
 		<service name="PD"> <parent/> </service>
 		<service name="ROM"> <parent/> </service>
