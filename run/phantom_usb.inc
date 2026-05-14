@@ -292,7 +292,7 @@
 
 
 
-<start name="se_vault" caps="1500" ram="1500M">
+<start name="se_vault" caps="1500" ram="2000M">
   <provides>
     <service name="File_system"/>
   </provides>
@@ -304,10 +304,7 @@
 		</vfs>
 	</config>
 	<route>
-		<!-- 
-    <service name="ROM" label="ui_config"> <child name="dynamic_rom" label="file_vault_ui_config"/> </service>
-		<service name="Report" label="ui_report"> <child name="report_rom"/> </service>
-    -->
+
 		<service name="File_system" label_prefix="se_tresor_trust_anchor_vfs -> storage_dir"> <child name="usb_sec_fs" identity="se_vault -> trust_anchor"/> </service>
 		<service name="File_system" label_prefix="se_tresor_init ->">          <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="File_system" label_prefix="tresor ->">               <child name="se_vfs" identity="se_vault -> data"/> </service>
@@ -322,16 +319,21 @@
 		<service name="CPU"> <parent/> </service>
 		<service name="LOG"> <parent/> </service>
 		<service name="RM"> <parent/> </service>
+    
+    <any-service> <parent/> </any-service>
+	</route>
+</start>
+
+    
     <!--
     <service name="Rtc"> <child name="pc_rtc"/> </service>
     <service name="Block" label_prefix="isomem ->"> <child name="ahci"/> </service>
     <service name="Gui"> <child name="nitpicker"/> </service>
     -->
-    <any-service> <parent/> </any-service>
-	</route>
-</start>
-
-
+		<!-- 
+    <service name="ROM" label="ui_config"> <child name="dynamic_rom" label="file_vault_ui_config"/> </service>
+		<service name="Report" label="ui_report"> <child name="report_rom"/> </service>
+    -->
 
 
 

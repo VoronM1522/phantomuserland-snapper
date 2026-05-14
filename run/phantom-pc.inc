@@ -80,6 +80,7 @@
 <start name="vfs" ram="200M" caps="200">
   <provides><service name="File_system"/></provides>
   <config>
+  
    	<vfs>
    		<dir name="dev">
    			<block name="block" block_buffer_count="128"/>
@@ -108,11 +109,11 @@
       verbose="true"
       redundancy="2"
       integrity="true"
-      max_snapshots="5" 
-      min_snapshots="1" 
+      max_snapshots="0" 
+      min_snapshots="0" 
       threshold="1000"
       expiration="3600"
-      bufsize="10M">
+      bufsize="100M">
 	  <!--
 	  max_snapshots="5" 
       min_snapshots="1"
@@ -128,9 +129,10 @@
 
 	<!--
 		<service name="File_system"><child name="vfs"/></service>
-	-->
-
 		<service name="File_system"><child name="se_vault"/></service>
+	-->
+		<service name="File_system"><child name="se_vault"/></service>
+		
 		<!-- <service name="Block"><child name="ahci"/></service> -->
 		<any-service> <parent/> <any-child /> </any-service>
 	</route>

@@ -147,6 +147,8 @@ if {[have_board pc]} {
     append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
     append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
 
+    # append qemu_args " -drive id=snapper,file=bin/snapper_block.ext3.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
+
 
     append qemu_args " -device qemu-xhci,id=xhci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=xhci.0 "
     # append qemu_args " -drive id=test,file=bin/test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
