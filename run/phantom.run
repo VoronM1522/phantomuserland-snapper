@@ -152,7 +152,10 @@ if {[have_board pc]} {
 
     append qemu_args " -device qemu-xhci,id=xhci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=xhci.0 "
     # append qemu_args " -drive id=test,file=bin/test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
-    append qemu_args " -drive id=test,file=bin/test.ext3.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
+    
+    # append qemu_args " -drive id=test,file=bin/test.ext3.raw,format=raw,if=none,cache=none   -device ide-hd,drive=test,bus=ahci.2 "
+    append qemu_args " -drive id=test,file=bin/test.ext4.raw,format=raw,if=none,cache=none   -device ide-hd,drive=test,bus=ahci.2 "
+    
     # append qemu_args " -drive id=test,file=bin/test16.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
     # append qemu_args " -drive id=test,file=bin/clean_test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
     # append qemu_args " -display vnc=0.0.0.0:0 "

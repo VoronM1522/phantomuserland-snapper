@@ -133,20 +133,33 @@
    			<block name="block" block_buffer_count="128"/>
    		</dir>
       <dir name="drive">
-        <lwext4 block_device="/dev/block" cache_write_back="yes"
-                expand_via_io="yes" writeable="yes"
+        <lwext4 block_device="/dev/block" cache_write_back="no"
+                expand_via_io="no" writeable="yes"
                 reporting="yes"
-                external_cache_size="32M" report_cache="yes"/>
+                report_cache="yes"/>
       </dir>
     -->
 <start name="se_vfs" ram="512M" caps="200">
   <binary name="vfs"/>
   <provides><service name="File_system"/></provides>
   <config verbose="yes">
+  <!--
    	<vfs>
-      <rump fs="ext2fs" ram="256M"/>
+      <rump fs="ext2fs" ram="20M"/>
    	</vfs>
-    <default-policy root="/" writeable="yes"/>
+  -->
+    <vfs>
+      <dir name="dev">
+          <block name="block" block_buffer_count="128"/>
+        </dir>
+        <dir name="drive">
+          <lwext4 block_device="/dev/block" cache_write_back="no"
+                  expand_via_io="yes" writeable="yes"
+                  reporting="yes"
+                  report_cache="yes"/>
+        </dir>
+      </vfs>
+    <default-policy root="/drive" writeable="yes"/>
   </config>
   <route>
     <service name="Block"> <child name="ahci"/> </service>
