@@ -156,7 +156,7 @@
           <lwext4 block_device="/dev/block" cache_write_back="no"
                   expand_via_io="yes" writeable="yes"
                   reporting="yes"
-                  report_cache="yes"/>
+                  report_cache="no"/>
         </dir>
       </vfs>
     <default-policy root="/drive" writeable="yes"/>
