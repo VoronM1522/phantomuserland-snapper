@@ -145,6 +145,7 @@ if {[have_board pc]} {
     append qemu_args " -m 8000 "
     append qemu_args " -device ahci,id=ahci -boot d "
     append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
+    # append qemu_args " -drive id=disk,file=bin/small_block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
     append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
 
     # append qemu_args " -drive id=snapper,file=bin/snapper_block.ext3.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
