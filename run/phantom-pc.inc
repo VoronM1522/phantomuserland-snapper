@@ -76,7 +76,7 @@
 	</route>
 </start>
 
-<!--
+
 <start name="vfs" ram="200M" caps="200">
   <provides><service name="File_system"/></provides>
   <config>
@@ -97,7 +97,7 @@
     <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
--->
+
 
  
 <start name="snapper" ram="400M" caps="400">

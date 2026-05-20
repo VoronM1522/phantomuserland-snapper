@@ -245,7 +245,12 @@
   <provides>
     <service name="File_system"/>
   </provides>
-	<config jitterentropy_available="yes">
+	<config 
+    jitterentropy_available="yes"
+    fsck_avail="no"
+    passphrase="P53ud0_Pa55w0rd"
+    image_name=""tresor.img
+  >
 		<vfs>
 			<dir name="tresor">
 				<fs label="tresor -> /"/>
