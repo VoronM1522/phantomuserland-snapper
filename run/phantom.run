@@ -39,6 +39,7 @@ set build_components {
     app/mke2fs
     server/vfs_block
     app/e2fsck
+    app/fs_tool
     ls
 }
 
