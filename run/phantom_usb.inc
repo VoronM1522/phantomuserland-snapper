@@ -242,6 +242,7 @@
 
 
 <start name="se_vault" caps="1500" ram="2000M">
+  <exit propagate="yes"/>
   <provides>
     <service name="File_system"/>
   </provides>

@@ -101,6 +101,9 @@
 
  
 <start name="snapper" ram="400M" caps="400">
+  <!--
+  <exit propagate="yes"/>
+  -->
   <provides>
     <service name="Snapper"/>
   </provides>
@@ -131,7 +134,7 @@
 		<service name="File_system"><child name="vfs"/></service>
 		<service name="File_system"><child name="se_vault"/></service>
 	-->
-		<service name="File_system"><child name="se_vault"/></service>
+		<service name="File_system"><child name="se_vaultse_vault"/></service>
 		
 		<!-- <service name="Block"><child name="ahci"/></service> -->
 		<any-service> <parent/> <any-child /> </any-service>
