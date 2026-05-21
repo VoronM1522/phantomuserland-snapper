@@ -247,10 +247,9 @@
   </provides>
 	<config 
     jitterentropy_available="yes"
-    fsck_apply="no"
+    fsck_apply="yes"
     passphrase="P53ud0_Pa55w0rd"
     image_name="tresor.img"
-    check_lock="no"
   >
 		<vfs>
 			<dir name="tresor">
