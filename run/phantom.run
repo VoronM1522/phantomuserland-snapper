@@ -164,9 +164,14 @@ if {[have_board pc]} {
 
     append qemu_args " -boot d "
     append qemu_args " -device pcie-root-port,id=rp1,chassis=0,slot=1 -device pcie-root-port,id=rp2,chassis=0,slot=2 -device pcie-root-port,id=rp3,chassis=0,slot=3 "
+    append qemu_args " -device pcie-root-port,id=rp4,chassis=0,slot=4 "
     append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none -device nvme,drive=disk,serial=disk0001,bus=rp1,logical_block_size=512,physical_block_size=512 "
     append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none,cache=none,aio=io_uring -device nvme,drive=snapper,serial=snap0001,bus=rp2,logical_block_size=512,physical_block_size=512 "
-    append qemu_args " -drive id=test,file=bin/test.ext4.raw,format=raw,if=none,cache=none,aio=io_uring -device nvme,drive=test,serial=test0001,bus=rp3,logical_block_size=512,physical_block_size=512 "
+    
+    # append qemu_args " -drive id=test,file=bin/test.ext4.raw,format=raw,if=none,cache=none,aio=io_uring -device nvme,drive=test,serial=test0001,bus=rp3,logical_block_size=512,physical_block_size=512 "
+    
+    append qemu_args " -drive id=test,file=bin/test.5gb.raw,format=raw,if=none,cache=none,aio=io_uring -device nvme,drive=test,serial=test0001,bus=rp3,logical_block_size=512,physical_block_size=512 "
+    append qemu_args " -drive id=usb,file=bin/usb.raw,format=raw,if=none,cache=none,aio=io_uring -device nvme,drive=usb,serial=usb0001,bus=rp4,logical_block_size=512,physical_block_size=512 "
 
     append qemu_args " -display vnc=0.0.0.0:0 "
     append qemu_args " -display sdl "

@@ -52,6 +52,7 @@
 		<policy label="nvme0 -> " info="yes"> <pci class="NVME"/> </policy>
         <policy label="nvme1 -> " info="yes"> <pci class="NVME"/> </policy>
         <policy label="nvme2 -> " info="yes"> <pci class="NVME"/> </policy>
+		<policy label="nvme3 -> " info="yes"> <pci class="NVME"/> </policy>
 
 		<policy label_prefix="ps2"> <device name="ps2"/> </policy>
 		<policy label_prefix="fb"  info="yes"> <pci class="VGA"/> </policy>
@@ -119,7 +120,21 @@
 	<binary name="nvme"/>
     <provides><service name="Block"/></provides>
     <config>
-        <policy label="se_vfs -> " writeable="yes"/>
+        <default-policy writeable="yes"/>
+    </config>
+    <route>
+        <service name="Platform"> <child name="platform"/> </service>
+        <service name="Timer">    <child name="timer"/>    </service>
+        <any-service> <parent/> <any-child/> </any-service>
+    </route>
+</start>
+
+
+<start name="nvme3" caps="120" ram="24M">
+	<binary name="nvme"/>
+    <provides><service name="Block"/></provides>
+    <config>
+        <policy label="usb_sec_fs -> " writeable="yes"/>
     </config>
     <route>
         <service name="Platform"> <child name="platform"/> </service>

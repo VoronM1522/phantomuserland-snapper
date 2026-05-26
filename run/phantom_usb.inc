@@ -10,35 +10,7 @@
   </route>
 </start>
 
-
 <!--
-<start name="usb_sec_fs" caps="120" ram="16M">
-  <binary name="vfs"/>
-  <provides>
-    <service name="File_system"/>
-  </provides>
-  <config>
-    <vfs>
-      <dir name="usb">
-        <fatfs block="default" writeable="yes"/>
-      </dir>
-      <dir name="dev">
-        <jitterentropy/>
-        <tresor_trust_anchor name="tresor_trust_anchor" storage_dir="/usb"/>
-      </dir>
-    </vfs>
-    <default-policy root="/dev/tresor_trust_anchor" writeable="yes"/>
-    <policy label="sequence -> ls_seq1 -> /" root="/usb"/>
-    <policy label="sequence -> ls_seq2 -> /" root="/dev/tresor_trust_anchor"/>
-  </config>
-  <route>
-    <service name="Block"> <child name="usb_sec"/> </service>
-    <any-service> <parent/> </any-service>
-  </route>
-</start>
--->
-
-
 <start name="usb_sec_fs" caps="120" ram="32M">
   <binary name="vfs"/>
   <provides>
@@ -49,11 +21,6 @@
       <dir name="usb">
         <fatfs block="default" writeable="yes"/>
       </dir>
-      <!--
-      <dir name="dev">
-        <tresor_trust_anchor name="tresor_trust_anchor" storage_dir="/usb"/>
-      </dir>
-      -->
     </vfs>
     <default-policy root="/usb" writeable="yes"/>
   </config>
@@ -62,6 +29,7 @@
     <any-service> <parent/> </any-service>
   </route>
 </start>
+-->
 
 
 <!--
@@ -76,16 +44,18 @@
       </dir>
     -->
 
-
+<!--
 <start name="se_vfs" ram="512M" caps="200">
   <binary name="vfs"/>
   <provides><service name="File_system"/></provides>
   <config verbose="yes">
+-->
   <!--
    	<vfs>
       <rump fs="ext2fs" ram="20M"/>
    	</vfs>
   -->
+<!--
     <vfs>
       <dir name="dev">
           <block name="block" block_buffer_count="128"/>
@@ -100,15 +70,44 @@
     <default-policy root="/drive" writeable="yes"/>
   </config>
   <route>
+-->
     <!--
     <service name="Block"> <child name="ahci"/> </service>
     <service name="Block"> <child name="nvme2"/> </service>
     -->
+<!--
     <service name="Block"> <child name="nvme2"/> </service>
     <service name="Report"> <child name="report_rom"/> </service>
     <any-service> <parent/> <any-child/> </any-service>
   </route>
 </start>
+-->
+
+<!--
+<start name="usb_sec_fs" ram="512M" caps="200">
+  <binary name="vfs"/>
+  <provides><service name="File_system"/></provides>
+  <config verbose="yes">
+    <vfs>
+      <dir name="dev">
+          <block name="block" block_buffer_count="128"/>
+        </dir>
+        <dir name="drive">
+          <lwext4 block_device="/dev/block" cache_write_back="no"
+                  expand_via_io="yes" writeable="yes"
+                  reporting="yes"
+                  report_cache="no"/>
+        </dir>
+      </vfs>
+    <default-policy root="/drive" writeable="yes"/>
+  </config>
+  <route>
+    <service name="Block"> <child name="nvme3"/> </service>
+    <service name="Report"> <child name="report_rom"/> </service>
+    <any-service> <parent/> <any-child/> </any-service>
+  </route>
+</start>
+-->
 
 
 <!--
@@ -255,22 +254,24 @@
 	<config 
     jitterentropy_available="yes"
     fsck_apply="no"
-    image_name="tresor.img"
   >
+    <vfs/>
+    <!--
 		<vfs>
 			<dir name="tresor">
 				<fs label="tresor -> /"/>
 			</dir>
 		</vfs>
+    -->
 	</config>
 	<route>
 
-		<service name="File_system" label_prefix="se_tresor_trust_anchor_vfs -> storage_dir"> <child name="usb_sec_fs" identity="se_vault -> trust_anchor"/> </service>
-		<service name="File_system" label_prefix="se_tresor_init ->">          <child name="se_vfs" identity="se_vault -> data"/> </service>
-		<service name="File_system" label_prefix="tresor ->">               <child name="se_vfs" identity="se_vault -> data"/> </service>
-		<service name="File_system" label_prefix="se_tresor_vfs -> tresor_fs"> <child name="se_vfs" identity="se_vault -> data"/> </service>
-		<service name="File_system" label_prefix="truncate_file -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
-    <service name="File_system" label_prefix="init_flag -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
+		<service name="Block" label_prefix="se_tresor_trust_anchor_vfs ->"> <child name="usb_sec" identity="se_vault -> trust_anchor"/> </service>
+    <service name="Block" label_prefix="se_tresor_init ->">          <child name="nvme2" identity="se_vault -> data"/> </service>
+		<service name="Block" label_prefix="tresor ->">               <child name="nvme2" identity="se_vault -> data"/> </service>
+		<service name="Block" label_prefix="se_tresor_vfs ->"> <child name="nvme2" identity="se_vault -> data"/> </service>
+		<service name="Block" label_prefix="truncate_file ->"> <child name="nvme2" identity="se_vault -> data"/> </service>
+    <service name="Block" label_prefix="init_flag ->"> <child name="nvme2" identity="se_vault -> data"/> </service>
 		<service name="Timer"> <child name="timer"/> </service>
     <service name="Report"> <child name="report_rom"/> </service>
 		<service name="PD"> <parent/> </service>
@@ -284,11 +285,22 @@
 </start>
 
 
-<!-- in config attr
+  <!-- in config attr
+  image_name="tresor.img"
   passphrase="P53ud0_Pa55w0rd"
   -->
     
     <!--
+
+    <service name="Block"> <child name="nvme2"/> </service>
+
+    <service name="File_system" label_prefix="se_tresor_init ->">          <child name="se_vfs" identity="se_vault -> data"/> </service>
+		<service name="File_system" label_prefix="tresor ->">               <child name="se_vfs" identity="se_vault -> data"/> </service>
+		<service name="File_system" label_prefix="se_tresor_vfs -> tresor_fs"> <child name="se_vfs" identity="se_vault -> data"/> </service>
+		<service name="File_system" label_prefix="truncate_file -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
+    <service name="File_system" label_prefix="init_flag -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
+
+
     <service name="File_system" label_prefix="fs_query ->">             <child name="se_vfs" identity="se_vault -> data"/> </service>
     <service name="File_system" label_prefix="image_fs_query ->">       <child name="se_vfs" identity="se_vault -> data"/> </service>
     <service name="Rtc"> <child name="pc_rtc"/> </service>
