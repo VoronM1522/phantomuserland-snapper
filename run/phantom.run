@@ -104,7 +104,8 @@ if {[have_board linux]} {
 }
 
 if {[have_board pc]} {
-    lappend build_components driver/platform driver/acpi driver/ahci app/pci_decode 
+    # ahci lappend build_components driver/platform driver/acpi driver/ahci app/pci_decode 
+    lappend build_components driver/platform driver/acpi driver/nvme app/pci_decode 
     append config [ exec $cat [genode_dir]/repos/ports/run/phantom_gui_drivers-pc.inc ]
     append config [ exec $cat [genode_dir]/repos/ports/run/phantom-pc.inc ]
 }
@@ -142,23 +143,31 @@ if {[have_board pc]} {
     build_boot_image [list {*}[build_artifacts] phantom_classes isomem ]
 
     append qemu_args " -smp 2 "
-    append qemu_args " -m 8000 "
-    append qemu_args " -device ahci,id=ahci -boot d "
-    append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
-    # append qemu_args " -drive id=disk,file=bin/small_block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
-    append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
+    append qemu_args " -m 10000 "
+    # append qemu_args " -device ahci,id=ahci -boot d "
+    # append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
+    # # append qemu_args " -drive id=disk,file=bin/small_block0.raw,format=raw,if=none             -device ide-hd,drive=disk,bus=ahci.0 "
+    # append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
 
-    # append qemu_args " -drive id=snapper,file=bin/snapper_block.ext3.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
+    # # append qemu_args " -drive id=snapper,file=bin/snapper_block.ext3.raw,format=raw,if=none   -device ide-hd,drive=snapper,bus=ahci.1 "
 
 
     append qemu_args " -device qemu-xhci,id=xhci -usb -device usb-host,vendorid=0x058f,productid=0x6387,bus=xhci.0 "
-    # append qemu_args " -drive id=test,file=bin/test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
+    # # append qemu_args " -drive id=test,file=bin/test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
     
-    append qemu_args " -drive id=test,file=bin/test.ext3.raw,format=raw,if=none,cache=none   -device ide-hd,drive=test,bus=ahci.2 "
+    # # append qemu_args " -drive id=test,file=bin/test.ext3.raw,format=raw,if=none,cache=none   -device ide-hd,drive=test,bus=ahci.2 "
     # append qemu_args " -drive id=test,file=bin/test.ext4.raw,format=raw,if=none,cache=none   -device ide-hd,drive=test,bus=ahci.2 "
+    # # append qemu_args " -drive id=test,file=bin/test.ext4.raw,format=raw,if=none,cache=none   -device ide-hd,drive=test,bus=ahci.2 "
     
-    # append qemu_args " -drive id=test,file=bin/test16.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
-    # append qemu_args " -drive id=test,file=bin/clean_test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
+    # # append qemu_args " -drive id=test,file=bin/test16.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
+    # # append qemu_args " -drive id=test,file=bin/clean_test.raw,format=raw,if=none   -device ide-hd,drive=test,bus=ahci.2 "
+
+    append qemu_args " -boot d "
+    append qemu_args " -device pcie-root-port,id=rp1,chassis=0,slot=1 -device pcie-root-port,id=rp2,chassis=0,slot=2 -device pcie-root-port,id=rp3,chassis=0,slot=3 "
+    append qemu_args " -drive id=disk,file=bin/block0.raw,format=raw,if=none -device nvme,drive=disk,serial=disk0001,bus=rp1,logical_block_size=512,physical_block_size=512 "
+    append qemu_args " -drive id=snapper,file=bin/snapper_block.raw,format=raw,if=none,cache=none,aio=io_uring -device nvme,drive=snapper,serial=snap0001,bus=rp2,logical_block_size=512,physical_block_size=512 "
+    append qemu_args " -drive id=test,file=bin/test.ext4.raw,format=raw,if=none,cache=none,aio=io_uring -device nvme,drive=test,serial=test0001,bus=rp3,logical_block_size=512,physical_block_size=512 "
+
     append qemu_args " -display vnc=0.0.0.0:0 "
     append qemu_args " -display sdl "
 }

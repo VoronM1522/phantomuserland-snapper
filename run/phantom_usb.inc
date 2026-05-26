@@ -75,6 +75,8 @@
                 report_cache="yes"/>
       </dir>
     -->
+
+
 <start name="se_vfs" ram="512M" caps="200">
   <binary name="vfs"/>
   <provides><service name="File_system"/></provides>
@@ -98,7 +100,11 @@
     <default-policy root="/drive" writeable="yes"/>
   </config>
   <route>
+    <!--
     <service name="Block"> <child name="ahci"/> </service>
+    <service name="Block"> <child name="nvme2"/> </service>
+    -->
+    <service name="Block"> <child name="nvme2"/> </service>
     <service name="Report"> <child name="report_rom"/> </service>
     <any-service> <parent/> <any-child/> </any-service>
   </route>
@@ -248,8 +254,7 @@
   </provides>
 	<config 
     jitterentropy_available="yes"
-    fsck_apply="yes"
-    passphrase="P53ud0_Pa55w0rd"
+    fsck_apply="no"
     image_name="tresor.img"
   >
 		<vfs>
@@ -263,12 +268,11 @@
 		<service name="File_system" label_prefix="se_tresor_trust_anchor_vfs -> storage_dir"> <child name="usb_sec_fs" identity="se_vault -> trust_anchor"/> </service>
 		<service name="File_system" label_prefix="se_tresor_init ->">          <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="File_system" label_prefix="tresor ->">               <child name="se_vfs" identity="se_vault -> data"/> </service>
-		<service name="File_system" label_prefix="fs_query ->">             <child name="se_vfs" identity="se_vault -> data"/> </service>
-		<service name="File_system" label_prefix="image_fs_query ->">       <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="File_system" label_prefix="se_tresor_vfs -> tresor_fs"> <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="File_system" label_prefix="truncate_file -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
     <service name="File_system" label_prefix="init_flag -> tresor"> <child name="se_vfs" identity="se_vault -> data"/> </service>
 		<service name="Timer"> <child name="timer"/> </service>
+    <service name="Report"> <child name="report_rom"/> </service>
 		<service name="PD"> <parent/> </service>
 		<service name="ROM"> <parent/> </service>
 		<service name="CPU"> <parent/> </service>
@@ -279,8 +283,14 @@
 	</route>
 </start>
 
+
+<!-- in config attr
+  passphrase="P53ud0_Pa55w0rd"
+  -->
     
     <!--
+    <service name="File_system" label_prefix="fs_query ->">             <child name="se_vfs" identity="se_vault -> data"/> </service>
+    <service name="File_system" label_prefix="image_fs_query ->">       <child name="se_vfs" identity="se_vault -> data"/> </service>
     <service name="Rtc"> <child name="pc_rtc"/> </service>
     <service name="Block" label_prefix="isomem ->"> <child name="ahci"/> </service>
     <service name="Gui"> <child name="nitpicker"/> </service>

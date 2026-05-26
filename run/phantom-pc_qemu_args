@@ -1,0 +1,4 @@
+-machine q35
+-cpu host
+-enable-kvm
+-net nic,model=e1000,netdev=net0 -netdev user,id=net0
