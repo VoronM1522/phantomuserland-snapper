@@ -35,7 +35,10 @@
 		<report devices="yes"/>
 		<policy label_prefix="usb_hid"><device class="0x3"/></policy>
 		<policy label="usb_sec -> ">
-			<device vendor_id="0x058f" product_id="0x6387"/> 
+			<device vendor_id="0x058f" product_id="0x6387"/>
+			<!--
+			<device vendor_id="0x1f75" product_id="0x0918"/>
+			-->
 		</policy>
 	</config>
 	<route>
