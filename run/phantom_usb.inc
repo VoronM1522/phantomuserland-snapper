@@ -267,6 +267,10 @@
 	<route>
 
 		<service name="Block" label_prefix="se_tresor_trust_anchor_vfs ->"> <child name="usb_sec" identity="se_vault -> trust_anchor"/> </service>
+    <!--
+    <service name="Block" label_prefix="se_tresor_trust_anchor_vfs ->"> <child name="nvme3" identity="se_vault -> trust_anchor"/> </service>
+    <service name="Block" label_prefix="se_tresor_trust_anchor_vfs ->"> <child name="usb_sec" identity="se_vault -> trust_anchor"/> </service>
+    -->
     <service name="Block" label_prefix="se_tresor_init ->">          <child name="nvme2" identity="se_vault -> data"/> </service>
 		<service name="Block" label_prefix="tresor ->">               <child name="nvme2" identity="se_vault -> data"/> </service>
 		<service name="Block" label_prefix="se_tresor_vfs ->"> <child name="nvme2" identity="se_vault -> data"/> </service>
