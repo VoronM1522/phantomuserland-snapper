@@ -41,8 +41,7 @@
 // #endif
 
 
-// static void do_phantom_phys_alloc_init(physalloc_t *arena, u_int32_t n_alloc_units, int
-// n_map_elems, void *mapbuf)
+// static void do_phantom_phys_alloc_init(physalloc_t *arena, u_int32_t n_alloc_units, int n_map_elems, void *mapbuf)
 // {
 //     hal_spin_init(&(arena->lock));
 
@@ -65,8 +64,7 @@
 // }
 
 
-// void phantom_phys_alloc_init_static(physalloc_t *arena, u_int32_t n_alloc_units, void
-// *mapbuf)
+// void phantom_phys_alloc_init_static(physalloc_t *arena, u_int32_t n_alloc_units, void *mapbuf)
 // {
 //     int n_map_elems = ((n_alloc_units-1)/8)+1;
 //     do_phantom_phys_alloc_init(arena, n_alloc_units, n_map_elems, mapbuf);
@@ -161,8 +159,7 @@
 // }
 
 
-// void phantom_phys_free_region( physalloc_t *arena, physalloc_item_t start, size_t
-// _n_pages )
+// void phantom_phys_free_region( physalloc_t *arena, physalloc_item_t start, size_t _n_pages )
 // {
 //     size_t n_pages = _n_pages;
 //     assert(arena->inited);
@@ -214,8 +211,7 @@
 // }
 
 
-// errno_t phantom_phys_alloc_region( physalloc_t *arena, physalloc_item_t *ret, size_t
-// npages )
+// errno_t phantom_phys_alloc_region( physalloc_t *arena, physalloc_item_t *ret, size_t npages )
 // {
 //     assert(arena->inited);
 
@@ -319,14 +315,10 @@
 //         }
 //     }
 
-//     //lprintf("used %d, realy %d, longest free %d\n", arena->n_used_pages, used_bits,
-//     longest_free );
+//     //lprintf("used %d, realy %d, longest free %d\n", arena->n_used_pages, used_bits, longest_free );
 
-//     //if( used_bits != arena->n_used_pages ) // always differs, for part of map
-//     corresponding to non-existant memory is marked as used
-//     //lprintf("used diff @%p: arena->n_used_pages %d, realy %d, diff %d, longest free
-//     %d\n", arena, arena->n_used_pages, used_bits, arena->n_used_pages - used_bits,
-//     longest_free );
+//     //if( used_bits != arena->n_used_pages ) // always differs, for part of map corresponding to non-existant memory is marked as used
+//     //lprintf("used diff @%p: arena->n_used_pages %d, realy %d, diff %d, longest free %d\n", arena, arena->n_used_pages, used_bits, arena->n_used_pages - used_bits, longest_free );
 
 //     return used_bits;
 // }

@@ -57,6 +57,8 @@
 // static long long diff = 0; // time set machinery
 
 
+
+
 // int hal_time_init()
 // {
 //     hal_spin_init(&sys_time_spinlock);
@@ -71,9 +73,11 @@
 // }
 
 
+
 // // ------------------------------------------------------------------
 // // Time machinery
 // // ------------------------------------------------------------------
+
 
 
 // static long msecDivider = 0;
@@ -152,8 +156,8 @@
 //     hal_spin_lock(&sys_time_spinlock);
 //     val = sys_time;
 
-//     // ask the architectural specific layer to give us a little better precision if it
-//     can if (arch_get_tick_rate && arch_get_time_delta)
+//     // ask the architectural specific layer to give us a little better precision if it can
+//     if (arch_get_tick_rate && arch_get_time_delta)
 //     {
 //         val += d;
 
@@ -236,9 +240,11 @@
 // }
 
 
+
 // // ------------------------------------------------------------------
 // // time_t
 // // ------------------------------------------------------------------
+
 
 
 // #define BIGTDIFF 1920962713L
@@ -249,8 +255,7 @@
 // {
 
 //     bigtime_t val = hal_local_time();
-//     //ph_printf("time bigtime = %lld systime = %lld rt delta = %lld tzdelta = %lld\n",
-//     val, sys_time, real_time_delta, tz_delta );
+//     //ph_printf("time bigtime = %lld systime = %lld rt delta = %lld tzdelta = %lld\n", val, sys_time, real_time_delta, tz_delta );
 
 //     // ToDO last constant must be tuned
 //     time_t t = (time_t)(val/BUGTFACT) - BIGTDIFF;
@@ -265,6 +270,7 @@
 // }
 
 
+
 // void set_time(time_t time)
 // {
 
@@ -276,6 +282,9 @@
 // }
 
 
+
+
+
 // // Uptime in seconds
 // time_t uptime(void)
 // {
@@ -285,13 +294,17 @@
 // }
 
 
+
 // // ------------------------------------------------------------------
 // // struct tm
 // // ------------------------------------------------------------------
 
 
-// struct tm tm_a = { 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Make sure time will be read
-// ASAP struct tm tm_b; struct tm *current_time = &tm_a;
+
+
+// struct tm tm_a = { 60, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // Make sure time will be read ASAP
+// struct tm tm_b;
+// struct tm *current_time = &tm_a;
 
 // static time_t fast_time_val = 0;
 
@@ -319,6 +332,7 @@
 
 // //! Fast, but less accurate time, sec
 // time_t fast_time(void) { return fast_time_val; }
+
 
 
 // //static char* numbers[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -402,6 +416,8 @@
 // }
 
 
+
+
 // struct tm *localtime_rb(bigtime_t timer, struct tm *tmb)
 // {
 //     return localtime_helper(timer, tmb);
@@ -410,6 +426,7 @@
 
 // // -----------------------------------------------------------------------
 // // Polled timeouts for drivers, interrupts must be enabled
+
 
 
 // // Set timeout length
@@ -424,5 +441,8 @@
 // {
 //     assert(timer != 0);
 //     assert_interrupts_enabled();
-//     return *timer < sys_time;
+//     return *timer < sys_time;    
 // }
+
+
+

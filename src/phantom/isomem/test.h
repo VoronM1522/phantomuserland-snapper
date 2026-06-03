@@ -7,7 +7,7 @@
  * Tests header.
  *
  *
- **/
+**/
 
 #ifndef TEST_H
 #define TEST_H
@@ -22,8 +22,7 @@ int do_test_malloc(const char *test_parm);
 int do_test_physmem(const char *test_parm);
 int do_test_physalloc_gen(const char *test_parm);
 
-// TODO test physmem alloc: allocator separately and core/locore/vaddr instances
-// separately
+// TODO test physmem alloc: allocator separately and core/locore/vaddr instances separately
 
 int do_test_cbuf(const char *test_parm);
 
@@ -46,7 +45,9 @@ int do_test_video(const char *test_parm);
 // TODO test paging io
 
 
+
 // TODO test stopping videodriver, starting VGA driver, etc
+
 
 
 // TODO test virtio drivers (and write 'em first)
@@ -72,6 +73,9 @@ int do_test_many_threads(const char *test_parm);
 int do_test_timed_call(const char *test_parm);
 
 
+
+
+
 int do_test_amap(const char *test_parm);
 int do_test_pool(const char *test_parm);
 int do_test_hdir(const char *test_parm);
@@ -89,4 +93,5 @@ int do_test_crypt(const char *test_parm);
 
 int do_test_wtty(const char *test_parm);
 
-#endif  // TEST_H
+#endif // TEST_H
+
